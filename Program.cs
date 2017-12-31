@@ -25,6 +25,7 @@ namespace MarkdownWikiGenerator {
             homeBuilder.Header(1, "References");
             homeBuilder.AppendLine();
 
+            var namespaceIndex = 1;
 
             foreach (var g in types.GroupBy(x => x.Namespace).OrderBy(x => x.Key)) {
                 if (!Directory.Exists(dest)) { Directory.CreateDirectory(dest); }
@@ -33,11 +34,16 @@ namespace MarkdownWikiGenerator {
                 var namespaceDirectory = Path.Combine(dest, g.Key);
 
                 if (!Directory.Exists(namespaceDirectory)) { Directory.CreateDirectory(namespaceDirectory); }
+
+                var namespaceFile = Path.Combine(namespaceDirectory, "_index.md");
+                var namespaceContent = WriteContent(g.Key, namespaceIndex, "");
+                File.WriteAllText(namespaceFile, namespaceContent);
                 
                 homeBuilder.HeaderWithLink(2, g.Key, g.Key);
                 homeBuilder.AppendLine();
 
-                var index = 1;
+                namespaceIndex++;
+                var classIndex = 1;
                 foreach (var classItem in g.OrderBy(x => x.Name)) {
                     // Make the class a directory
                     var classDirectory = Path.Combine(namespaceDirectory, classItem.BeautifyName.Replace("<", "-").Replace(">", "").Replace(",", "").Replace(" ", "-").ToLower());
@@ -45,12 +51,12 @@ namespace MarkdownWikiGenerator {
                     if (!Directory.Exists(classDirectory)) { Directory.CreateDirectory(classDirectory); }
                     
                     // Write the contents of the class to the file
-                    var file = Path.Combine(classDirectory, "_index.md");
-                    Console.WriteLine("Making: " + file);
-                    var content = WriteContent(classItem.BeautifyName, index, classItem.ToString());
-                    File.WriteAllText(file, content);
+                    var classFile = Path.Combine(classDirectory, "_index.md");
+                    Console.WriteLine("Making: " + classFile);
+                    var classContent = WriteContent(classItem.BeautifyName, classIndex, classItem.ToString());
+                    File.WriteAllText(classFile, classContent);
 
-                    index++;
+                    classIndex++;
                 }
 
             }

@@ -93,11 +93,13 @@ namespace MarkdownWikiGenerator
 
         public void Table(string[] headers, IEnumerable<string[]> items)
         {
-            sb.Append("| ");
+            // TODO: Append a | here for the header
             foreach (var item in headers)
             {
                 sb.Append(item);
-                sb.Append(" | ");
+                if (item != headers[headers.Length - 1]) {
+                    sb.Append(" | ");
+                }
             }
             sb.AppendLine();
 
